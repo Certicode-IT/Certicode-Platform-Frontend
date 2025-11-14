@@ -14,7 +14,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
       <h1 className="text-2xl font-semibold mb-4">
-        Welcome, {user?.username ?? "Guest"}
+        Welcome, {user?.name ?? "Guest"}
       </h1>
       <Button variant="destructive" onClick={handleLogout}>
         Logout
