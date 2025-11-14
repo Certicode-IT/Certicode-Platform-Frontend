@@ -1,48 +1,55 @@
-import { useState } from "react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useAuthStore } from "@/store/authStore"
-import { useNavigate, Link } from "react-router-dom"
-import { FcGoogle } from "react-icons/fc"
-import { FaFacebook, FaApple } from "react-icons/fa"
-import certicodeLogo from "@/assets/certicode.png"
+import { useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
+import { useNavigate, Link } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook } from "react-icons/fa";
+import certicodeLogo from "@/assets/certicode.png";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const login = useAuthStore((s) => s.login)
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const login = useAuthStore((s) => s.login);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const success = login(username, password)
-    if (success) {
-      navigate("/dashboard")
-    } else {
-      setError("Invalid username or password")
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(""); // Reset error on submit
+
+    try {
+      const success = await login(email, password);
+      if (success) {
+        navigate("/dashboard"); // Redirect on success
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch (err: any) {
+      // Capture server error messages if any
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Something went wrong. Try again.");
+      }
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#F8F8F8]">
       <Card className="w-[400px] border-none shadow-lg bg-white rounded-2xl">
-        <CardHeader className="flex flex-col items-center space-y-3 pt-8">
-          {/* Logo */}
-          <img
-            src={certicodeLogo}
-            alt="Certicode Logo"
-            className="w-16 h-16 object-contain"
-          />
+        <CardHeader className="flex flex-col items-center space-y-2 pt-8">
+          <img src={certicodeLogo} alt="Certicode Logo" className="w-16 h-16" />
 
-          <h1 className="text-3xl font-extrabold text-[#1C1C1C]">
+          <h1 className="text-3xl text-center font-extrabold text-[#1C1C1C]">
             Certicode Platform
           </h1>
-          <h2 className="text-lg font-semibold text-[#1C1C1C]">
+          <h2 className="text-lg font-semibold text-center text-[#1C1C1C]">
             Sign in to your account
           </h2>
-          <p className="text-sm text-gray-500">
+
+          <p className="text-sm text-center text-gray-500">
             Don’t have an account?{" "}
             <Link to="/signup" className="text-[#FF8C00] font-medium hover:underline">
               Sign Up
@@ -53,11 +60,12 @@ export default function LoginPage() {
         <CardContent className="px-8 pb-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Email Address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="focus-visible:ring-[#FF8C00]"
             />
+
             <Input
               placeholder="Password"
               type="password"
@@ -75,15 +83,15 @@ export default function LoginPage() {
               SIGN IN
             </Button>
 
-            {/* Divider line */}
+            {/* Divider */}
             <div className="flex items-center my-4">
-              <div className="flex-grow border-t border-gray-300"></div>
+              <div className="flex grow border-t border-gray-300"></div>
               <span className="mx-3 text-sm text-gray-400">Or sign in with</span>
-              <div className="flex-grow border-t border-gray-300"></div>
+              <div className="flex grow border-t border-gray-300"></div>
             </div>
 
-            {/* Social Login Buttons */}
-            <div className="flex justify-between">
+            {/* Social Buttons */}
+            <div className="flex justify-center gap-4">
               <Button
                 type="button"
                 variant="outline"
@@ -98,29 +106,16 @@ export default function LoginPage() {
               >
                 <FcGoogle />
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-[30%] flex items-center justify-center gap-2 border-gray-300 hover:bg-gray-100"
-              >
-                <FaApple className="text-black" />
-              </Button>
             </div>
 
             <p className="text-xs text-center text-gray-400 mt-4">
               By signing in, you agree to our{" "}
-              <a href="#" className="underline hover:text-gray-600">
-                Terms of Use
-              </a>{" "}
-              and{" "}
-              <a href="#" className="underline hover:text-gray-600">
-                Privacy Policy
-              </a>
-              .
+              <a href="#" className="underline hover:text-gray-600">Terms of Use</a> and{" "}
+              <a href="#" className="underline hover:text-gray-600">Privacy Policy</a>.
             </p>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
