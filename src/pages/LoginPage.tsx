@@ -17,12 +17,12 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Reset error on submit
+    setError(""); 
 
     try {
       const success = await login(email, password);
       if (success) {
-        navigate("/dashboard"); // Redirect on success
+        navigate("/dashboard"); 
       } else {
         setError("Invalid email or password");
       }
